@@ -283,6 +283,53 @@ void BinBucketSort(Item arr[], size_t size){
 	delete[] buckets;
 }
 
+// Selection sort for array (Complexity O(n^2))
+void SelectionSort(Item arr[], size_t size)
+{
+	for(int i = 0; i < size - 1; ++i)
+	{
+		int k = i;
+		for(int j = i; j < size; ++j)
+		{
+			// Finding min/max for pushing to buttom
+			if(arr[j] < arr[k] ){
+				k = j;
+			}
+		}
+		swap(arr[k], arr[i]);
+	}
+}
+
+int partition(Item arr[], int begin, int end){
+    int i = begin, j = end - 1;
+    int pivot = begin + (j + 1 - i) / 2;
+    while(i < j){
+        while(i < end && arr[i] <= arr[pivot]) ++i;
+        while(j >= begin && arr[j] > arr[pivot]) --j;
+	if(i < j){
+        	swap(arr[i], arr[j]);
+		if(pivot == j) {
+			swap(i, j);
+			pivot = j;
+		}
+	}
+    }
+    swap(arr[j],  arr[pivot]);
+    return j;
+}
+
+
+void quicksort(Item arr[], int begin, int end)
+{
+	if(end - begin > 0){
+		cout << "Begin: " << begin << " and  end: " << end << endl;
+		int par_ptr = partition(arr, begin, end);
+		quicksort(arr, begin, par_ptr);
+		quicksort(arr, par_ptr + 1, end);
+	}
+}
+
+
 int main(){
 	int arr1[10] = {8, 1, 8, -4, 1, 10, 20, 6, 3, 15};
 	cout << "Before bubble sort: " << endl;
@@ -344,5 +391,17 @@ int main(){
 	PrintArr(arr5, 7);
 	CountSort(arr4, 7);
 	PrintArr(arr4, 7);
+
+	Item arr6[7] = {43, 1, 54, 3, 7, 18, -15};
+	cout << "Array before selection sort: " << endl;
+	PrintArr(arr6, 7);
+	SelectionSort(arr6, 7);
+	cout << "Array after selection sort: " << endl;
+	PrintArr(arr6, 7);
+	Item arr7[9] = {50, -70, 60, -90, 10, 10, 10, 20, 40};
+	
+	PrintArr(arr7, 9);
+	quicksort(arr7, 0, 9);
+	PrintArr(arr7, 9);
 	return 0;
 }
