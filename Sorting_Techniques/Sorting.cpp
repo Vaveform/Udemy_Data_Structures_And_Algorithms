@@ -148,6 +148,102 @@ void InsertionSort(Item* ptr, size_t size){
 	}
 }
 
+
+// Good algorithm for sorting list - merge sort
+// We have two opeartions: Split list by 2 lists and merge two sorted lists
+void SplitList(Node* head, Node** second_part){
+	// We have two static variables:
+	// i - current position in list
+	// list_i - size of list 
+	static int i = 0;
+	static int list_s = 0;
+	if(head == nullptr)
+		return;
+	// Incrementing every variable
+	++list_s;
+	++i;
+	// Making recursive call
+	SplitList(head->next, second_part);
+	// This part making after base case of recursion
+	// with previous parametrs of call.
+	if(i == list_s / 2){
+		// Setting second_part - pointer to second part
+		// of list
+		*second_part = head->next;
+		// Slicing first part
+		head->next = nullptr;
+		// Setting list_s for other calls
+		list_s = 0;
+	}
+	--i;
+}
+
+// Merging two lists
+Node* mergeTwoLists(Node* l1, Node* l2){
+	if(l1 == nullptr || l2 == nullptr){
+            if(l1 == nullptr && l2 != nullptr){
+                return l2;
+            }
+            else if(l1 != nullptr && l2 == nullptr){ return l1;}
+            else{
+                return l1;
+            }
+        }
+        Node* begin = nullptr;
+        Node* tmp = nullptr;
+        int i = 0;
+        while(l1 != nullptr && l2 != nullptr){
+            if(l1->val <= l2->val){
+                if(i == 0){
+                    begin = l1;
+                    tmp = begin;
+                    l1 = l1->next;
+                }
+                else{
+                    tmp->next = l1;
+                    tmp = tmp->next;
+                    l1 = l1->next;
+                }
+            }
+            else{
+                if(i == 0){
+                    begin = l2;
+                    tmp = begin;
+                    l2 = l2->next;
+                }
+                else{
+                    tmp->next = l2;
+                    tmp = tmp->next;
+                    l2 = l2->next;
+                }
+            }
+            i++;
+       	}
+        if(l1 != nullptr){
+            tmp->next = l1;
+        }
+        else{
+            tmp->next = l2;
+        }
+        return begin;
+}
+// Good algorithm for sorting lists
+// On leetcode - beats 97.53 percents of people by time 
+Node* MergeSortList(Node* head){
+	if(head != nullptr && head->next != nullptr)
+	{
+		// For storing second part of list
+		Node* second_part = nullptr;
+		// Head - pointer to first part of list
+		SplitList(head, &second_part);
+		return mergeTwoLists(MergeSortList(head), MergeSortList(second_part));
+	}
+	else{
+		// Base case - simply returning Node
+		return head;
+	}
+}
+
 // Algorithm for sorting list
 void InsertionSortList(Node** ptr){
 	if(ptr == nullptr){
@@ -398,10 +494,21 @@ int main(){
 	SelectionSort(arr6, 7);
 	cout << "Array after selection sort: " << endl;
 	PrintArr(arr6, 7);
-	Item arr7[9] = {50, -70, 60, -90, 10, 10, 10, 20, 40};
-	
-	PrintArr(arr7, 9);
-	quicksort(arr7, 0, 9);
-	PrintArr(arr7, 9);
+	//Item arr7[9] = {50, -70, 60, -90, 10, 10, 10, 20, 40};
+	//
+	//PrintArr(arr7, 9);
+	//quicksort(arr7, 0, 9);
+	//PrintArr(arr7, 9);
+	Node* list2 = nullptr;
+	AddElementToList(&list2, 24);
+	AddElementToList(&list2, 12);
+	AddElementToList(&list2, -10);
+	AddElementToList(&list2, 50);
+	AddElementToList(&list2, -90);
+	AddElementToList(&list2, 5);
+	cout << "List before merge sorting: " << endl;
+	PrintList(list2);
+	cout << "List after merge sorting: " << endl;
+	PrintList(MergeSortList(list2));
 	return 0;
 }
