@@ -244,7 +244,7 @@ Node* MergeSortList(Node* head){
 	}
 }
 
-// Algorithm for sorting list
+// Insertion sort algorithm for sorting list
 void InsertionSortList(Node** ptr){
 	if(ptr == nullptr){
 		return ;
@@ -396,15 +396,24 @@ void SelectionSort(Item arr[], size_t size)
 	}
 }
 
+
+// For central element of diapason of array 
+// returning index of this element, after placing
+// all elements to right side which bigger than this element
+// and placing all elements which smaller than this element
 int partition(Item arr[], int begin, int end){
     int i = begin, j = end - 1;
     int pivot = begin + (j + 1 - i) / 2;
     while(i < j){
+	// Finding elements for swapping i -> arr <- j
         while(i < end && arr[i] <= arr[pivot]) ++i;
         while(j >= begin && arr[j] > arr[pivot]) --j;
 	if(i < j){
         	swap(arr[i], arr[j]);
+		// Pivot should be shifted and swapped
 		if(pivot == j) {
+			// Changing index for pivot
+			// we shift pivot element!
 			swap(i, j);
 			pivot = j;
 		}
@@ -418,97 +427,216 @@ int partition(Item arr[], int begin, int end){
 void quicksort(Item arr[], int begin, int end)
 {
 	if(end - begin > 0){
-		cout << "Begin: " << begin << " and  end: " << end << endl;
 		int par_ptr = partition(arr, begin, end);
+		// Index par_ptr - last index element for array and using
+		// in procedure of quicksort
 		quicksort(arr, begin, par_ptr);
 		quicksort(arr, par_ptr + 1, end);
 	}
 }
 
 
-int main(){
-	int arr1[10] = {8, 1, 8, -4, 1, 10, 20, 6, 3, 15};
-	cout << "Before bubble sort: " << endl;
-	PrintArr(arr1, 10);
-	BubbleSort(arr1, 10);
-	cout << "After bubble sort: " << endl;
-	PrintArr(arr1, 10);
-	int arr2[10] = {8, 1, 8, -4, 1, 10, 20, 6, 3, 15};
-	cout << "Before bubble sort: " << endl;
-	PrintArr(arr2, 10);
-	BubbleSort(arr2, 10);
-	cout << "After bubble sort: " << endl;
-	PrintArr(arr2, 10);
-
-	Node* list = nullptr;
-	AddElementToList(&list, 5);
-	AddElementToList(&list, 3);
-	AddElementToList(&list, -12);
-	PrintList(list);
-	while(list != nullptr){
-		cout << list->val << endl;
-		PopFrontOfList(&list);
+// mid - begin of the second sorted subarray
+// l - begin of the first sorted subarray
+// h - end of the second sorted subarray (last element index plus 1)
+// mid - end of the first sorted subarray
+void mergeArrDiapasons(Item arr[], int l, int mid, int h){
+	// Using extra space (O(n), n - number of elements of input arr)
+	// Time complexity - O(n)
+	if(h - l <= 1)
+		return;
+	Item* temp = new Item[h - l];
+	int first = l;
+	int second = mid;
+	int k = 0;
+	// Example: 1 2 3 4 |3| 4 5 6 7
+	while(first < mid && second < h){
+		// Assign to k-index element min element 
+		// of first / second element
+		if(arr[first] < arr[second]){
+			temp[k++] = arr[first++];
+		}
+		else{
+			temp[k++] = arr[second++];
+		}
 	}
-	AddElementToList(&list, 1);
-	InsertNodeToSortedList(&list, new Node(0));
-	PrintList(list);
-	AddElementToList(&list, 6);
-	AddElementToList(&list, 8);
-	AddElementToList(&list, 12);
-	PrintList(list);
-	InsertValToSortedList(&list, -10);
-	InsertValToSortedList(&list, 7);
-	InsertValToSortedList(&list, 25);
-	PrintList(list);
-	while(list != nullptr)
-		PopFrontOfList(&list);
-	AddElementToList(&list, 24);
-	AddElementToList(&list, 12);
-	AddElementToList(&list, -10);
-	AddElementToList(&list, 50);
-	AddElementToList(&list, -90);
-	AddElementToList(&list, 5);
-	cout << "Insertion sort for linked list below: " << endl;
-	PrintList(list);
-	InsertionSortList(&list);
-	cout << "After sorted algorithm: " << endl;
-	PrintList(list);
+	for(; first < mid; first++){
+		temp[k++] = arr[first];
+	}
+	for(; second < h; second++){
+		temp[k++] = arr[second];
+	}
+	// Now temp array is sorted -> copy to input array
+	int begin = l;
+	for(int i = 0; i < h - l; ++i){
+		arr[begin++] = temp[i];
+	}
+	delete[] temp;
+}
 
 
-	Item arr3[6] = {13425, 342, 543, 654, 2345, 32};
-	cout << "Array before radix sort: " << endl;
-	PrintArr(arr3, 6);
-	RadixSort(arr3, 6);
-	cout << "Array after radix sort: " << endl;
-	PrintArr(arr3, 6);
-	Item arr4[7] = {12, 4, 1, 4, 5, 4, 0};
-	Item arr5[7] = {12, 4, 1, 4, 5, 4, 0};
-	BinBucketSort(arr5, 7);
-	PrintArr(arr5, 7);
-	CountSort(arr4, 7);
-	PrintArr(arr4, 7);
 
-	Item arr6[7] = {43, 1, 54, 3, 7, 18, -15};
-	cout << "Array before selection sort: " << endl;
-	PrintArr(arr6, 7);
-	SelectionSort(arr6, 7);
-	cout << "Array after selection sort: " << endl;
-	PrintArr(arr6, 7);
-	//Item arr7[9] = {50, -70, 60, -90, 10, 10, 10, 20, 40};
-	//
-	//PrintArr(arr7, 9);
-	//quicksort(arr7, 0, 9);
-	//PrintArr(arr7, 9);
-	Node* list2 = nullptr;
-	AddElementToList(&list2, 24);
-	AddElementToList(&list2, 12);
-	AddElementToList(&list2, -10);
-	AddElementToList(&list2, 50);
-	AddElementToList(&list2, -90);
-	AddElementToList(&list2, 5);
-	cout << "List before merge sorting: " << endl;
-	PrintList(list2);
-	cout << "List after merge sorting: " << endl;
-	PrintList(MergeSortList(list2));
+
+void IterativeMergeSort(Item arr[], size_t size){
+	int p = 2, i = 0;
+	for(p = 2; p < size; p*=2){
+		for(i = 0; i < size; i+=p){
+			// case when p step (2^n) + i smaller then array end
+			if(i + p <=  size)
+				mergeArrDiapasons(arr, i, (i + (i + p)) / 2, i + p);
+			// Merging part of array which is not fit to step 
+			// (step + 1 bigger than size) - this case very bad for merging
+			else{
+				mergeArrDiapasons(arr, i, (i + size) / 2, size);
+			}
+		}
+	}
+	mergeArrDiapasons(arr, 0, p/2 , size);
+}
+
+
+void RecursiveMergeSort(Item arr[], int begin, int end){
+	if(end - begin <= 1)
+		return;
+	if(end - begin == 2)
+		mergeArrDiapasons(arr, begin, begin + (end - begin) / 2, end);
+	// For mergeArrDiapasons selected indexes of end 
+	// First recursive call has end : begin + (end - begin) / 2
+	// it is number equal to the index of last element  + 1
+	RecursiveMergeSort(arr, begin, begin + (end - begin) / 2);
+	// Second recursive call start with the begin equal to the end of the first
+	// recursive call because for first recursive call mergeArrDiapasons will
+	// be interpret end as the index of last index element + 1 (element with index
+	// begin + (end - begin) / 2 - not element wich will be using for merging in first
+	// recursive call)
+	RecursiveMergeSort(arr, begin + ((end - begin) / 2) , end);
+	mergeArrDiapasons(arr, begin, begin + ((end - begin) / 2), end);
+}
+
+void ShellSortArr(Item arr[], size_t size, int delim)
+{
+	for(int j = size / delim; j >= 1; j /= delim)
+	{
+		// Starting insertion sort, but we 
+		// decremented/incremented by j -
+		// we sorted only elements which have gap
+		// between and start from index zero
+		for(int i = 0; i < size; i+= j){
+			int k = i - j;
+			Item value_to_insert = arr[i];
+			// Shifting elements for insertion
+			while(k > -1 && arr[k] > value_to_insert){
+				arr[k + j] = arr[k];
+				k -= j;
+			}
+			arr[k + j] = value_to_insert;
+		}
+	}
+}
+
+// I will write Shell Sort for Link List!!!
+
+int main(){
+	//int arr1[10] = {8, 1, 8, -4, 1, 10, 20, 6, 3, 15};
+	//cout << "Before bubble sort: " << endl;
+	//PrintArr(arr1, 10);
+	//BubbleSort(arr1, 10);
+	//cout << "After bubble sort: " << endl;
+	//PrintArr(arr1, 10);
+	//int arr2[10] = {8, 1, 8, -4, 1, 10, 20, 6, 3, 15};
+	//cout << "Before bubble sort: " << endl;
+	//PrintArr(arr2, 10);
+	//BubbleSort(arr2, 10);
+	//cout << "After bubble sort: " << endl;
+	//PrintArr(arr2, 10);
+
+	//Node* list = nullptr;
+	//AddElementToList(&list, 5);
+	//AddElementToList(&list, 3);
+	//AddElementToList(&list, -12);
+	//PrintList(list);
+	//while(list != nullptr){
+	//	cout << list->val << endl;
+	//	PopFrontOfList(&list);
+	//}
+	//AddElementToList(&list, 1);
+	//InsertNodeToSortedList(&list, new Node(0));
+	//PrintList(list);
+	//AddElementToList(&list, 6);
+	//AddElementToList(&list, 8);
+	//AddElementToList(&list, 12);
+	//PrintList(list);
+	//InsertValToSortedList(&list, -10);
+	//InsertValToSortedList(&list, 7);
+	//InsertValToSortedList(&list, 25);
+	//PrintList(list);
+	//while(list != nullptr)
+	//	PopFrontOfList(&list);
+	//AddElementToList(&list, 24);
+	//AddElementToList(&list, 12);
+	//AddElementToList(&list, -10);
+	//AddElementToList(&list, 50);
+	//AddElementToList(&list, -90);
+	//AddElementToList(&list, 5);
+	//cout << "Insertion sort for linked list below: " << endl;
+	//PrintList(list);
+	//InsertionSortList(&list);
+	//cout << "After sorted algorithm: " << endl;
+	//PrintList(list);
+
+
+	//Item arr3[6] = {13425, 342, 543, 654, 2345, 32};
+	//cout << "Array before radix sort: " << endl;
+	//PrintArr(arr3, 6);
+	//RadixSort(arr3, 6);
+	//cout << "Array after radix sort: " << endl;
+	//PrintArr(arr3, 6);
+	//Item arr4[7] = {12, 4, 1, 4, 5, 4, 0};
+	//Item arr5[7] = {12, 4, 1, 4, 5, 4, 0};
+	//BinBucketSort(arr5, 7);
+	//PrintArr(arr5, 7);
+	//CountSort(arr4, 7);
+	//PrintArr(arr4, 7);
+
+	//Item arr6[7] = {43, 1, 54, 3, 7, 18, -15};
+	//cout << "Array before selection sort: " << endl;
+	//PrintArr(arr6, 7);
+	//SelectionSort(arr6, 7);
+	//cout << "Array after selection sort: " << endl;
+	//PrintArr(arr6, 7);
+	Item arr7[11] = {0, 50, -70, 60, -90, 10, 10, 10, 20, 0,  40};
+	
+	//PrintArr(arr6, 11);
+	//quicksort(arr7, 0, 11);
+	//PrintArr(arr7, 11);
+
+	Item arr8[9] = {4, 1, 5, 0, 0, 0, -1, -1, 2};
+	
+	//mergeArrDiapasons(arr8, 0, 1, 2);
+	//PrintArr(arr8, 10);
+	//mergeArrDiapasons(arr8, 2, 3, 4);
+	//PrintArr(arr8, 10);
+	//mergeArrDiapasons(arr8, 4, 5, 6);
+	//PrintArr(arr8, 10);
+	//mergeArrDiapasons(arr8, 6, 7, 8);
+	PrintArr(arr7, 11);
+	ShellSortArr(arr7, 11, 2);
+	PrintArr(arr7, 11);
+
+
+	PrintArr(arr8, 9);
+	ShellSortArr(arr8, 9, 2);
+	PrintArr(arr8, 9);
+	//Node* list2 = nullptr;
+	//AddElementToList(&list2, 24);
+	//AddElementToList(&list2, 12);
+	//AddElementToList(&list2, -10);
+	//AddElementToList(&list2, 50);
+	//AddElementToList(&list2, -90);
+	//AddElementToList(&list2, 5);
+	//cout << "List before merge sorting: " << endl;
+	//PrintList(list2);
+	//cout << "List after merge sorting: " << endl;
+	//PrintList(MergeSortList(list2));
 	return 0;
 }
